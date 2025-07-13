@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCHIFINI - Panel d'Administration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #B8860B;
+            --black: #0D0D0D;
+            --anthracite: #2C2C2C;
+            --light-metal: #CCCCCC;
+            --off-white: #F5F5F5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--black);
+            color: var(--off-white);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+        }
+        
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-color: var(--black);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80') no-repeat center center;
+            background-size: cover;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        .login-form {
+            background-color: rgba(44, 44, 44, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+            border-top: 5px solid var(--gold);
+            transform: scale(0.9);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light-metal);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--black);
+            border: 1px solid var(--light-metal);
+            color: var(--off-white);
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--black);
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        /* Admin Panel */
+        .admin-container {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .admin-title {
+            font-size: 2rem;
+            color: var(--gold);
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background-color: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--gold);
+            color: var(--black);
+        }
+        
+        .admin-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .admin-section {
+            background-color: var(--anthracite);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border-top: 3px solid var(--gold);
+        }
+        
+        .admin-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 1.8rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background-color: var(--black);
+            border: 1px solid var(--light-metal);
+            color: var(--off-white);
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-control:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            background-color: var(--black);
+            margin-bottom: 15px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .image-preview .placeholder {
+            color: var(--light-metal);
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: block;
+            padding: 10px 15px;
+            background-color: var(--black);
+            color: var(--gold);
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            border: 1px dashed var(--gold);
+        }
+        
+        .file-label:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        .update-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--black);
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .update-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        
+        .update-btn:active {
+            transform: translateY(0);
+        }
+        
+        .success-message {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-form {
+                padding: 30px 20px;
+            }
+            
+            .admin-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .login-form {
+                padding: 25px 15px;
+            }
+            
+            .form-group input,
+            .form-control {
+                padding: 10px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <form class="login-form" id="loginForm">
+            <div class="login-logo">ARCHIFINI</div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="login-btn">Se connecter</button>
+            <div class="error-message" id="errorMessage">Mot de passe incorrect</div>
+        </form>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div class="admin-container" id="adminPanel">
+        <div class="admin-header">
+            <h1 class="admin-title"><i class="fas fa-cog"></i> Panel d'Administration ARCHIFINI</h1>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+        </div>
+        
+        <div class="admin-sections">
+            <!-- Hero Section -->
+            <div class="admin-section">
+                <h2 class="section-title"><i class="fas fa-home"></i> Section Hero</h2>
+                <div class="image-preview" id="heroImagePreview">
+                    <div class="placeholder">Aperçu de l'image Hero</div>
+                </div>
+                <input type="file" id="heroImageInput" class="file-input" accept="image/*">
+                <label for="heroImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
+                <input type="text" class="form-control" id="heroTitle" placeholder="Titre principal">
+                <textarea class="form-control" id="heroText" placeholder="Texte descriptif"></textarea>
+                <button class="update-btn" data-section="hero"><i class="fas fa-save"></i> Mettre à jour</button>
+                <div class="success-message">Modifications enregistrées avec succès!</div>
+            </div>
+            
+            <!-- Services Section -->
+            <div class="admin-section">
+                <h2 class="section-title"><i class="fas fa-concierge-bell"></i> Section Services</h2>
+                <h3>Service 1</h3>
+                <input type="text" class="form-control" id="service1Title" placeholder="Titre du service">
+                <textarea class="form-control" id="service1Text" placeholder="Description du service"></textarea>
+                
+                <h3>Service 2</h3>
+                <input type="text" class="form-control" id="service2Title" placeholder="Titre du service">
+                <textarea class="form-control" id="service2Text" placeholder="Description du service"></textarea>
+                
+                <h3>Service 3</h3>
+                <input type="text" class="form-control" id="service3Title" placeholder="Titre du service">
+                <textarea class="form-control" id="service3Text" placeholder="Description du service"></textarea>
+                
+                <button class="update-btn" data-section="services"><i class="fas fa-save"></i> Mettre à jour</button>
+                <div class="success-message">Modifications enregistrées avec succès!</div>
+            </div>
+            
+            <!-- Portfolio Section -->
+            <div class="admin-section">
+                <h2 class="section-title"><i class="fas fa-images"></i> Section Portfolio</h2>
+                
+                <h3>Projet 1</h3>
+                <div class="image-preview" id="portfolio1ImagePreview">
+                    <div class="placeholder">Aperçu du projet 1</div>
+                </div>
+                <input type="file" id="portfolio1ImageInput" class="file-input" accept="image/*">
+                <label for="portfolio1ImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
+                <input type="text" class="form-control" id="portfolio1Title" placeholder="Titre du projet">
+                <input type="text" class="form-control" id="portfolio1Subtitle" placeholder="Sous-titre">
+                
+                <h3>Projet 2</h3>
+                <div class="image-preview" id="portfolio2ImagePreview">
+                    <div class="placeholder">Aperçu du projet 2</div>
+                </div>
+                <input type="file" id="portfolio2ImageInput" class="file-input" accept="image/*">
+                <label for="portfolio2ImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
+                <input type="text" class="form-control" id="portfolio2Title" placeholder="Titre du projet">
+                <input type="text" class="form-control" id="portfolio2Subtitle" placeholder="Sous-titre">
+                
+                <button class="update-btn" data-section="portfolio"><i class="fas fa-save"></i> Mettre à jour</button>
+                <div class="success-message">Modifications enregistrées avec succès!</div>
+            </div>
+            
+            <!-- About Section -->
+            <div class="admin-section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> Section À Propos</h2>
+                <div class="image-preview" id="aboutImagePreview">
+                    <div class="placeholder">Aperçu de l'image À Propos</div>
+                </div>
+                <input type="file" id="aboutImageInput" class="file-input" accept="image/*">
+                <label for="aboutImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
+                <input type="text" class="form-control" id="aboutTitle" placeholder="Titre">
+                <textarea class="form-control" id="aboutText1" placeholder="Premier paragraphe"></textarea>
+                <textarea class="form-control" id="aboutText2" placeholder="Deuxième paragraphe"></textarea>
+                
+                <h3>Statistiques</h3>
+                <input type="text" class="form-control" id="stat1Number" placeholder="Nombre 1">
+                <input type="text" class="form-control" id="stat1Label" placeholder="Label 1">
+                <input type="text" class="form-control" id="stat2Number" placeholder="Nombre 2">
+                <input type="text" class="form-control" id="stat2Label" placeholder="Label 2">
+                
+                <button class="update-btn" data-section="about"><i class="fas fa-save"></i> Mettre à jour</button>
+                <div class="success-message">Modifications enregistrées avec succès!</div>
+            </div>
+            
+            <!-- Biography Section -->
+            <div class="admin-section">
+                <h2 class="section-title"><i class="fas fa-pen-fancy"></i> Section Signature</h2>
+                <textarea class="form-control" id="bioText1" placeholder="Premier paragraphe"></textarea>
+                <textarea class="form-control" id="bioText2" placeholder="Deuxième paragraphe"></textarea>
+                <textarea class="form-control" id="bioText3" placeholder="Troisième paragraphe"></textarea>
+                <textarea class="form-control" id="bioText4" placeholder="Quatrième paragraphe"></textarea>
+                <button class="update-btn" data-section="biography"><i class="fas fa-save"></i> Mettre à jour</button>
+                <div class="success-message">Modifications enregistrées avec succès!</div>
+            </div>
+            
+            <!-- Contact Section -->
+            <div class="admin-section">
+                <h2 class="section-title"><i class="fas fa-envelope"></i> Section Contact</h2>
+                <input type="text" class="form-control" id="contactAddress" placeholder="Adresse">
+                <input type="text" class="form-control" id="contactPhone" placeholder="Téléphone">
+                <input type="text" class="form-control" id="contactEmail" placeholder="Email">
+                <input type="text" class="form-control" id="contactHours" placeholder="Heures d'ouverture">
+                <button class="update-btn" data-section="contact"><i class="fas fa-save"></i> Mettre à jour</button>
+                <div class="success-message">Modifications enregistrées avec succès!</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Password Protection
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginScreen = document.getElementById('loginScreen');
+        const adminPanel = document.getElementById('adminPanel');
+        
+        const CORRECT_PASSWORD = "Archifini12";
+        
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            
+            if (password === CORRECT_PASSWORD) {
+                // Successful login
+                loginScreen.style.display = 'none';
+                adminPanel.style.display = 'block';
+                
+                // Load current content
+                loadCurrentContent();
+            } else {
+                // Show error
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+        
+        // Logout button
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            adminPanel.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            document.getElementById('password').value = '';
+        });
+        
+        // Image preview functionality
+        function setupImagePreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            
+            input.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.addEventListener('load', function() {
+                        preview.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = this.result;
+                        preview.appendChild(img);
+                    });
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Set up all image previews
+        setupImagePreview('heroImageInput', 'heroImagePreview');
+        setupImagePreview('portfolio1ImageInput', 'portfolio1ImagePreview');
+        setupImagePreview('portfolio2ImageInput', 'portfolio2ImagePreview');
+        setupImagePreview('aboutImageInput', 'aboutImagePreview');
+        
+        // Load current content from localStorage
+        function loadCurrentContent() {
+            // Hero Section
+            if (localStorage.getItem('heroTitle')) {
+                document.getElementById('heroTitle').value = localStorage.getItem('heroTitle');
+                document.getElementById('heroText').value = localStorage.getItem('heroText');
+            }
+            
+            // Services Section
+            if (localStorage.getItem('service1Title')) {
+                document.getElementById('service1Title').value = localStorage.getItem('service1Title');
+                document.getElementById('service1Text').value = localStorage.getItem('service1Text');
+                document.getElementById('service2Title').value = localStorage.getItem('service2Title');
+                document.getElementById('service2Text').value = localStorage.getItem('service2Text');
+                document.getElementById('service3Title').value = localStorage.getItem('service3Title');
+                document.getElementById('service3Text').value = localStorage.getItem('service3Text');
+            }
+            
+            // Portfolio Section
+            if (localStorage.getItem('portfolio1Title')) {
+                document.getElementById('portfolio1Title').value = localStorage.getItem('portfolio1Title');
+                document.getElementById('portfolio1Subtitle').value = localStorage.getItem('portfolio1Subtitle');
+                document.getElementById('portfolio2Title').value = localStorage.getItem('portfolio2Title');
+                document.getElementById('portfolio2Subtitle').value = localStorage.getItem('portfolio2Subtitle');
+            }
+            
+            // About Section
+            if (localStorage.getItem('aboutTitle')) {
+                document.getElementById('aboutTitle').value = localStorage.getItem('aboutTitle');
+                document.getElementById('aboutText1').value = localStorage.getItem('aboutText1');
+                document.getElementById('aboutText2').value = localStorage.getItem('aboutText2');
+                document.getElementById('stat1Number').value = localStorage.getItem('stat1Number');
+                document.getElementById('stat1Label').value = localStorage.getItem('stat1Label');
+                document.getElementById('stat2Number').value = localStorage.getItem('stat2Number');
+                document.getElementById('stat2Label').value = localStorage.getItem('stat2Label');
+            }
+            
+            // Biography Section
+            if (localStorage.getItem('bioText1')) {
+                document.getElementById('bioText1').value = localStorage.getItem('bioText1');
+                document.getElementById('bioText2').value = localStorage.getItem('bioText2');
+                document.getElementById('bioText3').value = localStorage.getItem('bioText3');
+                document.getElementById('bioText4').value = localStorage.getItem('bioText4');
+            }
+            
+            // Contact Section
+            if (localStorage.getItem('contactAddress')) {
+                document.getElementById('contactAddress').value = localStorage.getItem('contactAddress');
+                document.getElementById('contactPhone').value = localStorage.getItem('contactPhone');
+                document.getElementById('contactEmail').value = localStorage.getItem('contactEmail');
+                document.getElementById('contactHours').value = localStorage.getItem('contactHours');
+            }
+        }
+        
+        // Update buttons functionality
+        document.querySelectorAll('.update-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const section = this.getAttribute('data-section');
+                const successMessage = this.nextElementSibling;
+                
+                // Save to localStorage
+                if (section === 'hero') {
+                    localStorage.setItem('heroTitle', document.getElementById('heroTitle').value);
+                    localStorage.setItem('heroText', document.getElementById('heroText').value);
+                } 
+                else if (section === 'services') {
+                    localStorage.setItem('service1Title', document.getElementById('service1Title').value);
+                    localStorage.setItem('service1Text', document.getElementById('service1Text').value);
+                    localStorage.setItem('service2Title', document.getElementById('service2Title').value);
+                    localStorage.setItem('service2Text', document.getElementById('service2Text').value);
+                    localStorage.setItem('service3Title', document.getElementById('service3Title').value);
+                    localStorage.setItem('service3Text', document.getElementById('service3Text').value);
+                }
+                else if (section === 'portfolio') {
+                    localStorage.setItem('portfolio1Title', document.getElementById('portfolio1Title').value);
+                    localStorage.setItem('portfolio1Subtitle', document.getElementById('portfolio1Subtitle').value);
+                    localStorage.setItem('portfolio2Title', document.getElementById('portfolio2Title').value);
+                    localStorage.setItem('portfolio2Subtitle', document.getElementById('portfolio2Subtitle').value);
+                }
+                else if (section === 'about') {
+                    localStorage.setItem('aboutTitle', document.getElementById('aboutTitle').value);
+                    localStorage.setItem('aboutText1', document.getElementById('aboutText1').value);
+                    localStorage.setItem('aboutText2', document.getElementById('aboutText2').value);
+                    localStorage.setItem('stat1Number', document.getElementById('stat1Number').value);
+                    localStorage.setItem('stat1Label', document.getElementById('stat1Label').value);
+                    localStorage.setItem('stat2Number', document.getElementById('stat2Number').value);
+                    localStorage.setItem('stat2Label', document.getElementById('stat2Label').value);
+                }
+                else if (section === 'biography') {
+                    localStorage.setItem('bioText1', document.getElementById('bioText1').value);
+                    localStorage.setItem('bioText2', document.getElementById('bioText2').value);
+                    localStorage.setItem('bioText3', document.getElementById('bioText3').value);
+                    localStorage.setItem('bioText4', document.getElementById('bioText4').value);
+                }
+                else if (section === 'contact') {
+                    localStorage.setItem('contactAddress', document.getElementById('contactAddress').value);
+                    localStorage.setItem('contactPhone', document.getElementById('contactPhone').value);
+                    localStorage.setItem('contactEmail', document.getElementById('contactEmail').value);
+                    localStorage.setItem('contactHours', document.getElementById('contactHours').value);
+                }
+                
+                // Show success message
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+                
+                // Send email with changes
+                sendEmailNotification(section);
+            });
+        });
+        
+        // Function to send email notification
+        function sendEmailNotification(section) {
+            const emailData = {
+                section: section,
+                changes: {}
+            };
+            
+            // Collect changes based on section
+            if (section === 'hero') {
+                emailData.changes = {
+                    heroTitle: document.getElementById('heroTitle').value,
+                    heroText: document.getElementById('heroText').value
+                };
+            } 
+            else if (section === 'services') {
+                emailData.changes = {
+                    service1Title: document.getElementById('service1Title').value,
+                    service1Text: document.getElementById('service1Text').value,
+                    service2Title: document.getElementById('service2Title').value,
+                    service2Text: document.getElementById('service2Text').value,
+                    service3Title: document.getElementById('service3Title').value,
+                    service3Text: document.getElementById('service3Text').value
+                };
+            }
+            else if (section === 'portfolio') {
+                emailData.changes = {
+                    portfolio1Title: document.getElementById('portfolio1Title').value,
+                    portfolio1Subtitle: document.getElementById('portfolio1Subtitle').value,
+                    portfolio2Title: document.getElementById('portfolio2Title').value,
+                    portfolio2Subtitle: document.getElementById('portfolio2Subtitle').value
+                };
+            }
+            else if (section === 'about') {
+                emailData.changes = {
+                    aboutTitle: document.getElementById('aboutTitle').value,
+                    aboutText1: document.getElementById('aboutText1').value,
+                    aboutText2: document.getElementById('aboutText2').value,
+                    stat1Number: document.getElementById('stat1Number').value,
+                    stat1Label: document.getElementById('stat1Label').value,
+                    stat2Number: document.getElementById('stat2Number').value,
+                    stat2Label: document.getElementById('stat2Label').value
+                };
+            }
+            else if (section === 'biography') {
+                emailData.changes = {
+                    bioText1: document.getElementById('bioText1').value,
+                    bioText2: document.getElementById('bioText2').value,
+                    bioText3: document.getElementById('bioText3').value,
+                    bioText4: document.getElementById('bioText4').value
+                };
+            }
+            else if (section === 'contact') {
+                emailData.changes = {
+                    contactAddress: document.getElementById('contactAddress').value,
+                    contactPhone: document.getElementById('contactPhone').value,
+                    contactEmail: document.getElementById('contactEmail').value,
+                    contactHours: document.getElementById('contactHours').value
+                };
+            }
+            
+            // In a real implementation, you would send this data to your server
+            // which would then send the email. For demonstration, we'll log it.
+            console.log("Email notification data:", emailData);
+            
+            // This is where you would make an AJAX call to your server
+            // For example:
+            /*
+            fetch('/send-update-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(emailData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Email sent:', data);
+            })
+            .catch(error => {
+                console.error('Error sending email:', error);
+            });
+            */
+            
+            // For demo purposes, we'll simulate a successful email send
+            setTimeout(() => {
+                console.log(`Email sent to aouissifousseni@gmail.com about changes to ${section} section`);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
