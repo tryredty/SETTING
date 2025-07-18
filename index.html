@@ -605,46 +605,53 @@
                 const successMessage = this.nextElementSibling;
                 
                 // Save to localStorage
-                if (section === 'hero') {
-                    localStorage.setItem('heroTitle', document.getElementById('heroTitle').value);
-                    localStorage.setItem('heroText', document.getElementById('heroText').value);
-                } 
-                else if (section === 'services') {
-                    localStorage.setItem('service1Title', document.getElementById('service1Title').value);
-                    localStorage.setItem('service1Text', document.getElementById('service1Text').value);
-                    localStorage.setItem('service2Title', document.getElementById('service2Title').value);
-                    localStorage.setItem('service2Text', document.getElementById('service2Text').value);
-                    localStorage.setItem('service3Title', document.getElementById('service3Title').value);
-                    localStorage.setItem('service3Text', document.getElementById('service3Text').value);
-                }
-                else if (section === 'portfolio') {
-                    localStorage.setItem('portfolio1Title', document.getElementById('portfolio1Title').value);
-                    localStorage.setItem('portfolio1Subtitle', document.getElementById('portfolio1Subtitle').value);
-                    localStorage.setItem('portfolio2Title', document.getElementById('portfolio2Title').value);
-                    localStorage.setItem('portfolio2Subtitle', document.getElementById('portfolio2Subtitle').value);
-                }
-                else if (section === 'about') {
-                    localStorage.setItem('aboutTitle', document.getElementById('aboutTitle').value);
-                    localStorage.setItem('aboutText1', document.getElementById('aboutText1').value);
-                    localStorage.setItem('aboutText2', document.getElementById('aboutText2').value);
-                    localStorage.setItem('stat1Number', document.getElementById('stat1Number').value);
-                    localStorage.setItem('stat1Label', document.getElementById('stat1Label').value);
-                    localStorage.setItem('stat2Number', document.getElementById('stat2Number').value);
-                    localStorage.setItem('stat2Label', document.getElementById('stat2Label').value);
-                }
-                else if (section === 'biography') {
-                    localStorage.setItem('bioText1', document.getElementById('bioText1').value);
-                    localStorage.setItem('bioText2', document.getElementById('bioText2').value);
-                    localStorage.setItem('bioText3', document.getElementById('bioText3').value);
-                    localStorage.setItem('bioText4', document.getElementById('bioText4').value);
-                }
-                else if (section === 'contact') {
-                    localStorage.setItem('contactAddress', document.getElementById('contactAddress').value);
-                    localStorage.setItem('contactPhone', document.getElementById('contactPhone').value);
-                    localStorage.setItem('contactEmail', document.getElementById('contactEmail').value);
-                    localStorage.setItem('contactHours', document.getElementById('contactHours').value);
-                }
+               import { initializeApp } from "firebase/app";
+
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDU84fSCZo_zCzJT591pECgCJpThho0FaE",
+  authDomain: "archifini-admin.firebaseapp.com",
+  projectId: "archifini-admin",
+  storageBucket: "archifini-admin.firebasestorage.app",
+  messagingSenderId: "180531529090",
+  appId: "1:180531529090:web:c69cb85aee4324aced3b9b"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
                 
+                // Show success message
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+                
+                // Send email with changes
+                sendEmailNotification(section);
+            });
+        });
+        const heroRef = doc(db, "sections", "hero");
+
+  // Charger les données existantes
+  getDoc(heroRef).then(docSnap => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById('heroTitle').value = data.heroTitle || "";
+      document.getElementById('heroText').value = data.heroText || "";
+    }
+  });
+
+  // Sauvegarder les données
+  document.getElementById('saveHero').addEventListener('click', async () => {
+    const newData = {
+      heroTitle: document.getElementById('heroTitle').value,
+      heroText: document.getElementById('heroText').value
+    };
+    await setDoc(heroRef, newData);
+    alert('Section hero mise à jour !');
+  });
                 // Show success message
                 successMessage.style.display = 'block';
                 setTimeout(() => {
