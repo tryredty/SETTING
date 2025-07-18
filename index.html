@@ -312,6 +312,22 @@
             display: none;
         }
         
+        .progress-container {
+            width: 100%;
+            background-color: var(--anthracite);
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--gold), var(--dark-gold));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .login-form {
@@ -381,12 +397,15 @@
                 <div class="image-preview" id="heroImagePreview">
                     <div class="placeholder">Aperçu de l'image Hero</div>
                 </div>
+                <div class="progress-container" id="heroProgressContainer">
+                    <div class="progress-bar" id="heroProgressBar"></div>
+                </div>
                 <input type="file" id="heroImageInput" class="file-input" accept="image/*">
                 <label for="heroImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
                 <input type="text" class="form-control" id="heroTitle" placeholder="Titre principal">
                 <textarea class="form-control" id="heroText" placeholder="Texte descriptif"></textarea>
                 <button class="update-btn" data-section="hero"><i class="fas fa-save"></i> Mettre à jour</button>
-                <div class="success-message">Modifications enregistrées avec succès!</div>
+                <div class="success-message" id="heroSuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
             
             <!-- Services Section -->
@@ -405,7 +424,7 @@
                 <textarea class="form-control" id="service3Text" placeholder="Description du service"></textarea>
                 
                 <button class="update-btn" data-section="services"><i class="fas fa-save"></i> Mettre à jour</button>
-                <div class="success-message">Modifications enregistrées avec succès!</div>
+                <div class="success-message" id="servicesSuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
             
             <!-- Portfolio Section -->
@@ -416,6 +435,9 @@
                 <div class="image-preview" id="portfolio1ImagePreview">
                     <div class="placeholder">Aperçu du projet 1</div>
                 </div>
+                <div class="progress-container" id="portfolio1ProgressContainer">
+                    <div class="progress-bar" id="portfolio1ProgressBar"></div>
+                </div>
                 <input type="file" id="portfolio1ImageInput" class="file-input" accept="image/*">
                 <label for="portfolio1ImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
                 <input type="text" class="form-control" id="portfolio1Title" placeholder="Titre du projet">
@@ -425,13 +447,16 @@
                 <div class="image-preview" id="portfolio2ImagePreview">
                     <div class="placeholder">Aperçu du projet 2</div>
                 </div>
+                <div class="progress-container" id="portfolio2ProgressContainer">
+                    <div class="progress-bar" id="portfolio2ProgressBar"></div>
+                </div>
                 <input type="file" id="portfolio2ImageInput" class="file-input" accept="image/*">
                 <label for="portfolio2ImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
                 <input type="text" class="form-control" id="portfolio2Title" placeholder="Titre du projet">
                 <input type="text" class="form-control" id="portfolio2Subtitle" placeholder="Sous-titre">
                 
                 <button class="update-btn" data-section="portfolio"><i class="fas fa-save"></i> Mettre à jour</button>
-                <div class="success-message">Modifications enregistrées avec succès!</div>
+                <div class="success-message" id="portfolioSuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
             
             <!-- About Section -->
@@ -439,6 +464,9 @@
                 <h2 class="section-title"><i class="fas fa-info-circle"></i> Section À Propos</h2>
                 <div class="image-preview" id="aboutImagePreview">
                     <div class="placeholder">Aperçu de l'image À Propos</div>
+                </div>
+                <div class="progress-container" id="aboutProgressContainer">
+                    <div class="progress-bar" id="aboutProgressBar"></div>
                 </div>
                 <input type="file" id="aboutImageInput" class="file-input" accept="image/*">
                 <label for="aboutImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
@@ -453,7 +481,7 @@
                 <input type="text" class="form-control" id="stat2Label" placeholder="Label 2">
                 
                 <button class="update-btn" data-section="about"><i class="fas fa-save"></i> Mettre à jour</button>
-                <div class="success-message">Modifications enregistrées avec succès!</div>
+                <div class="success-message" id="aboutSuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
             
             <!-- Biography Section -->
@@ -464,7 +492,7 @@
                 <textarea class="form-control" id="bioText3" placeholder="Troisième paragraphe"></textarea>
                 <textarea class="form-control" id="bioText4" placeholder="Quatrième paragraphe"></textarea>
                 <button class="update-btn" data-section="biography"><i class="fas fa-save"></i> Mettre à jour</button>
-                <div class="success-message">Modifications enregistrées avec succès!</div>
+                <div class="success-message" id="biographySuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
             
             <!-- Contact Section -->
@@ -475,24 +503,17 @@
                 <input type="text" class="form-control" id="contactEmail" placeholder="Email">
                 <input type="text" class="form-control" id="contactHours" placeholder="Heures d'ouverture">
                 <button class="update-btn" data-section="contact"><i class="fas fa-save"></i> Mettre à jour</button>
-                <div class="success-message">Modifications enregistrées avec succès!</div>
+                <div class="success-message" id="contactSuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
         </div>
     </div>
     
-    <script type="module">
-          // Import Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-        // Password Protection
-        const loginForm = document.getElementById('loginForm');
-        const errorMessage = document.getElementById('errorMessage');
-        const loginScreen = document.getElementById('loginScreen');
-        const adminPanel = document.getElementById('adminPanel');
-        
-        const CORRECT_PASSWORD = "Archifini12";
-        
+    <!-- Import Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+    
+    <script>
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDU84fSCZo_zCzJT591pECgCJpThho0FaE",
@@ -502,12 +523,21 @@
             messagingSenderId: "180531529090",
             appId: "1:180531529090:web:c69cb85aee4324aced3b9b"
         };
-        
+
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
         
-        loginForm.addEventListener('submit', async function(e) {
+        // Password Protection
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginScreen = document.getElementById('loginScreen');
+        const adminPanel = document.getElementById('adminPanel');
+        
+        const CORRECT_PASSWORD = "Archifini12";
+        
+        loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = document.getElementById('password').value;
             
@@ -517,7 +547,7 @@
                 adminPanel.style.display = 'block';
                 
                 // Load current content
-                await loadCurrentContent();
+                loadCurrentContent();
             } else {
                 // Show error
                 errorMessage.style.display = 'block';
@@ -562,25 +592,77 @@
         setupImagePreview('portfolio2ImageInput', 'portfolio2ImagePreview');
         setupImagePreview('aboutImageInput', 'aboutImagePreview');
         
-        // Load current content from Firebase
+        // Function to upload image to Firebase Storage
+        async function uploadImage(file, section, imageName, progressBarId, progressContainerId) {
+            try {
+                // Show progress bar
+                const progressContainer = document.getElementById(progressContainerId);
+                const progressBar = document.getElementById(progressBarId);
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                
+                // Create storage reference
+                const storageRef = storage.ref(`images/${section}/${imageName}`);
+                
+                // Upload file
+                const uploadTask = storageRef.put(file);
+                
+                // Return a promise that resolves with download URL
+                return new Promise((resolve, reject) => {
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            // Update progress bar
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            progressBar.style.width = progress + '%';
+                        },
+                        (error) => {
+                            // Hide progress bar on error
+                            progressContainer.style.display = 'none';
+                            reject(error);
+                        },
+                        async () => {
+                            // Upload complete, get download URL
+                            try {
+                                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                // Hide progress bar
+                                progressContainer.style.display = 'none';
+                                resolve(downloadURL);
+                            } catch (error) {
+                                progressContainer.style.display = 'none';
+                                reject(error);
+                            }
+                        }
+                    );
+                });
+            } catch (error) {
+                console.error("Error uploading image:", error);
+                throw error;
+            }
+        }
+        
+        // Load current content from Firestore
         async function loadCurrentContent() {
             try {
                 // Hero Section
-                const heroRef = doc(db, "sections", "hero");
-                const heroSnap = await getDoc(heroRef);
-                
-                if (heroSnap.exists()) {
-                    const heroData = heroSnap.data();
-                    document.getElementById('heroTitle').value = heroData.heroTitle || "";
-                    document.getElementById('heroText').value = heroData.heroText || "";
+                const heroDoc = await db.collection("sections").doc("hero").get();
+                if (heroDoc.exists) {
+                    const heroData = heroDoc.data();
+                    document.getElementById('heroTitle').value = heroData.title || "";
+                    document.getElementById('heroText').value = heroData.text || "";
+                    
+                    if (heroData.imageUrl) {
+                        const heroPreview = document.getElementById('heroImagePreview');
+                        heroPreview.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = heroData.imageUrl;
+                        heroPreview.appendChild(img);
+                    }
                 }
                 
                 // Services Section
-                const servicesRef = doc(db, "sections", "services");
-                const servicesSnap = await getDoc(servicesRef);
-                
-                if (servicesSnap.exists()) {
-                    const servicesData = servicesSnap.data();
+                const servicesDoc = await db.collection("sections").doc("services").get();
+                if (servicesDoc.exists) {
+                    const servicesData = servicesDoc.data();
                     document.getElementById('service1Title').value = servicesData.service1Title || "";
                     document.getElementById('service1Text').value = servicesData.service1Text || "";
                     document.getElementById('service2Title').value = servicesData.service2Title || "";
@@ -590,58 +672,75 @@
                 }
                 
                 // Portfolio Section
-                const portfolioRef = doc(db, "sections", "portfolio");
-                const portfolioSnap = await getDoc(portfolioRef);
-                
-                if (portfolioSnap.exists()) {
-                    const portfolioData = portfolioSnap.data();
-                    document.getElementById('portfolio1Title').value = portfolioData.portfolio1Title || "";
-                    document.getElementById('portfolio1Subtitle').value = portfolioData.portfolio1Subtitle || "";
-                    document.getElementById('portfolio2Title').value = portfolioData.portfolio2Title || "";
-                    document.getElementById('portfolio2Subtitle').value = portfolioData.portfolio2Subtitle || "";
+                const portfolioDoc = await db.collection("sections").doc("portfolio").get();
+                if (portfolioDoc.exists) {
+                    const portfolioData = portfolioDoc.data();
+                    document.getElementById('portfolio1Title').value = portfolioData.project1Title || "";
+                    document.getElementById('portfolio1Subtitle').value = portfolioData.project1Subtitle || "";
+                    document.getElementById('portfolio2Title').value = portfolioData.project2Title || "";
+                    document.getElementById('portfolio2Subtitle').value = portfolioData.project2Subtitle || "";
+                    
+                    if (portfolioData.project1ImageUrl) {
+                        const preview = document.getElementById('portfolio1ImagePreview');
+                        preview.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = portfolioData.project1ImageUrl;
+                        preview.appendChild(img);
+                    }
+                    
+                    if (portfolioData.project2ImageUrl) {
+                        const preview = document.getElementById('portfolio2ImagePreview');
+                        preview.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = portfolioData.project2ImageUrl;
+                        preview.appendChild(img);
+                    }
                 }
                 
                 // About Section
-                const aboutRef = doc(db, "sections", "about");
-                const aboutSnap = await getDoc(aboutRef);
-                
-                if (aboutSnap.exists()) {
-                    const aboutData = aboutSnap.data();
-                    document.getElementById('aboutTitle').value = aboutData.aboutTitle || "";
-                    document.getElementById('aboutText1').value = aboutData.aboutText1 || "";
-                    document.getElementById('aboutText2').value = aboutData.aboutText2 || "";
+                const aboutDoc = await db.collection("sections").doc("about").get();
+                if (aboutDoc.exists) {
+                    const aboutData = aboutDoc.data();
+                    document.getElementById('aboutTitle').value = aboutData.title || "";
+                    document.getElementById('aboutText1').value = aboutData.text1 || "";
+                    document.getElementById('aboutText2').value = aboutData.text2 || "";
                     document.getElementById('stat1Number').value = aboutData.stat1Number || "";
                     document.getElementById('stat1Label').value = aboutData.stat1Label || "";
                     document.getElementById('stat2Number').value = aboutData.stat2Number || "";
                     document.getElementById('stat2Label').value = aboutData.stat2Label || "";
+                    
+                    if (aboutData.imageUrl) {
+                        const preview = document.getElementById('aboutImagePreview');
+                        preview.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = aboutData.imageUrl;
+                        preview.appendChild(img);
+                    }
                 }
                 
                 // Biography Section
-                const bioRef = doc(db, "sections", "biography");
-                const bioSnap = await getDoc(bioRef);
-                
-                if (bioSnap.exists()) {
-                    const bioData = bioSnap.data();
-                    document.getElementById('bioText1').value = bioData.bioText1 || "";
-                    document.getElementById('bioText2').value = bioData.bioText2 || "";
-                    document.getElementById('bioText3').value = bioData.bioText3 || "";
-                    document.getElementById('bioText4').value = bioData.bioText4 || "";
+                const bioDoc = await db.collection("sections").doc("biography").get();
+                if (bioDoc.exists) {
+                    const bioData = bioDoc.data();
+                    document.getElementById('bioText1').value = bioData.text1 || "";
+                    document.getElementById('bioText2').value = bioData.text2 || "";
+                    document.getElementById('bioText3').value = bioData.text3 || "";
+                    document.getElementById('bioText4').value = bioData.text4 || "";
                 }
                 
                 // Contact Section
-                const contactRef = doc(db, "sections", "contact");
-                const contactSnap = await getDoc(contactRef);
-                
-                if (contactSnap.exists()) {
-                    const contactData = contactSnap.data();
-                    document.getElementById('contactAddress').value = contactData.contactAddress || "";
-                    document.getElementById('contactPhone').value = contactData.contactPhone || "";
-                    document.getElementById('contactEmail').value = contactData.contactEmail || "";
-                    document.getElementById('contactHours').value = contactData.contactHours || "";
+                const contactDoc = await db.collection("sections").doc("contact").get();
+                if (contactDoc.exists) {
+                    const contactData = contactDoc.data();
+                    document.getElementById('contactAddress').value = contactData.address || "";
+                    document.getElementById('contactPhone').value = contactData.phone || "";
+                    document.getElementById('contactEmail').value = contactData.email || "";
+                    document.getElementById('contactHours').value = contactData.hours || "";
                 }
                 
             } catch (error) {
                 console.error("Error loading content:", error);
+                alert("Une erreur est survenue lors du chargement des données");
             }
         }
         
@@ -649,17 +748,32 @@
         document.querySelectorAll('.update-btn').forEach(button => {
             button.addEventListener('click', async function() {
                 const section = this.getAttribute('data-section');
-                const successMessage = this.nextElementSibling;
+                const successMessage = document.getElementById(`${section}SuccessMessage`);
                 
                 try {
-                    const sectionRef = doc(db, "sections", section);
                     let sectionData = {};
+                    let imageUrls = {};
                     
-                    // Collect data based on section
+                    // Handle image uploads based on section
                     if (section === 'hero') {
+                        const imageInput = document.getElementById('heroImageInput');
+                        if (imageInput.files.length > 0) {
+                            const file = imageInput.files[0];
+                            const imageName = `hero-${Date.now()}-${file.name}`;
+                            const imageUrl = await uploadImage(
+                                file, 
+                                'hero', 
+                                imageName,
+                                'heroProgressBar',
+                                'heroProgressContainer'
+                            );
+                            imageUrls.imageUrl = imageUrl;
+                        }
+                        
                         sectionData = {
-                            heroTitle: document.getElementById('heroTitle').value,
-                            heroText: document.getElementById('heroText').value
+                            title: document.getElementById('heroTitle').value,
+                            text: document.getElementById('heroText').value,
+                            ...imageUrls
                         };
                     } 
                     else if (section === 'services') {
@@ -673,43 +787,87 @@
                         };
                     }
                     else if (section === 'portfolio') {
+                        const imageInput1 = document.getElementById('portfolio1ImageInput');
+                        if (imageInput1.files.length > 0) {
+                            const file = imageInput1.files[0];
+                            const imageName = `portfolio1-${Date.now()}-${file.name}`;
+                            const imageUrl = await uploadImage(
+                                file, 
+                                'portfolio', 
+                                imageName,
+                                'portfolio1ProgressBar',
+                                'portfolio1ProgressContainer'
+                            );
+                            imageUrls.project1ImageUrl = imageUrl;
+                        }
+                        
+                        const imageInput2 = document.getElementById('portfolio2ImageInput');
+                        if (imageInput2.files.length > 0) {
+                            const file = imageInput2.files[0];
+                            const imageName = `portfolio2-${Date.now()}-${file.name}`;
+                            const imageUrl = await uploadImage(
+                                file, 
+                                'portfolio', 
+                                imageName,
+                                'portfolio2ProgressBar',
+                                'portfolio2ProgressContainer'
+                            );
+                            imageUrls.project2ImageUrl = imageUrl;
+                        }
+                        
                         sectionData = {
-                            portfolio1Title: document.getElementById('portfolio1Title').value,
-                            portfolio1Subtitle: document.getElementById('portfolio1Subtitle').value,
-                            portfolio2Title: document.getElementById('portfolio2Title').value,
-                            portfolio2Subtitle: document.getElementById('portfolio2Subtitle').value
+                            project1Title: document.getElementById('portfolio1Title').value,
+                            project1Subtitle: document.getElementById('portfolio1Subtitle').value,
+                            project2Title: document.getElementById('portfolio2Title').value,
+                            project2Subtitle: document.getElementById('portfolio2Subtitle').value,
+                            ...imageUrls
                         };
                     }
                     else if (section === 'about') {
+                        const imageInput = document.getElementById('aboutImageInput');
+                        if (imageInput.files.length > 0) {
+                            const file = imageInput.files[0];
+                            const imageName = `about-${Date.now()}-${file.name}`;
+                            const imageUrl = await uploadImage(
+                                file, 
+                                'about', 
+                                imageName,
+                                'aboutProgressBar',
+                                'aboutProgressContainer'
+                            );
+                            imageUrls.imageUrl = imageUrl;
+                        }
+                        
                         sectionData = {
-                            aboutTitle: document.getElementById('aboutTitle').value,
-                            aboutText1: document.getElementById('aboutText1').value,
-                            aboutText2: document.getElementById('aboutText2').value,
+                            title: document.getElementById('aboutTitle').value,
+                            text1: document.getElementById('aboutText1').value,
+                            text2: document.getElementById('aboutText2').value,
                             stat1Number: document.getElementById('stat1Number').value,
                             stat1Label: document.getElementById('stat1Label').value,
                             stat2Number: document.getElementById('stat2Number').value,
-                            stat2Label: document.getElementById('stat2Label').value
+                            stat2Label: document.getElementById('stat2Label').value,
+                            ...imageUrls
                         };
                     }
                     else if (section === 'biography') {
                         sectionData = {
-                            bioText1: document.getElementById('bioText1').value,
-                            bioText2: document.getElementById('bioText2').value,
-                            bioText3: document.getElementById('bioText3').value,
-                            bioText4: document.getElementById('bioText4').value
+                            text1: document.getElementById('bioText1').value,
+                            text2: document.getElementById('bioText2').value,
+                            text3: document.getElementById('bioText3').value,
+                            text4: document.getElementById('bioText4').value
                         };
                     }
                     else if (section === 'contact') {
                         sectionData = {
-                            contactAddress: document.getElementById('contactAddress').value,
-                            contactPhone: document.getElementById('contactPhone').value,
-                            contactEmail: document.getElementById('contactEmail').value,
-                            contactHours: document.getElementById('contactHours').value
+                            address: document.getElementById('contactAddress').value,
+                            phone: document.getElementById('contactPhone').value,
+                            email: document.getElementById('contactEmail').value,
+                            hours: document.getElementById('contactHours').value
                         };
                     }
                     
-                    // Save to Firebase
-                    await setDoc(sectionRef, sectionData);
+                    // Save to Firestore
+                    await db.collection("sections").doc(section).set(sectionData, { merge: true });
                     
                     // Show success message
                     successMessage.style.display = 'block';
@@ -717,8 +875,10 @@
                         successMessage.style.display = 'none';
                     }, 3000);
                     
-                    // Send email notification
-                    sendEmailNotification(section);
+                    // Reload the content to show updated images
+                    if (Object.keys(imageUrls).length > 0) {
+                        loadCurrentContent();
+                    }
                     
                 } catch (error) {
                     console.error("Error saving data:", error);
@@ -726,12 +886,6 @@
                 }
             });
         });
-        
-        // Function to send email notification
-        function sendEmailNotification(section) {
-            // Votre code existant pour l'envoi d'email
-            console.log(`Changes to ${section} section would be emailed here`);
-        }
     </script>
 </body>
 </html>
