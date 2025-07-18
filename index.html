@@ -481,6 +481,10 @@
     </div>
     
     <script type="module">
+          // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
         // Password Protection
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
@@ -489,7 +493,21 @@
         
         const CORRECT_PASSWORD = "Archifini12";
         
-        loginForm.addEventListener('submit', function(e) {
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDU84fSCZo_zCzJT591pECgCJpThho0FaE",
+            authDomain: "archifini-admin.firebaseapp.com",
+            projectId: "archifini-admin",
+            storageBucket: "archifini-admin.appspot.com",
+            messagingSenderId: "180531529090",
+            appId: "1:180531529090:web:c69cb85aee4324aced3b9b"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const password = document.getElementById('password').value;
             
@@ -497,19 +515,9 @@
                 // Successful login
                 loginScreen.style.display = 'none';
                 adminPanel.style.display = 'block';
-    function checkPassword() {
-    const password = document.getElementById("passwordInput").value;
-
-    // Remplace "monmotdepasse" par ton vrai mot de passe
-    if (password === "Archifini12") {
-      alert("Accès autorisé !");
-      // Ici tu peux afficher le reste de la page ou rediriger vers Firebase
-    } else {
-      alert("Mot de passe incorrect !");
-    }
-  }
+                
                 // Load current content
-                loadCurrentContent();
+                await loadCurrentContent();
             } else {
                 // Show error
                 errorMessage.style.display = 'block';
@@ -554,202 +562,175 @@
         setupImagePreview('portfolio2ImageInput', 'portfolio2ImagePreview');
         setupImagePreview('aboutImageInput', 'aboutImagePreview');
         
-        // Load current content from localStorage
-        function loadCurrentContent() {
-            // Hero Section
-            if (localStorage.getItem('heroTitle')) {
-                document.getElementById('heroTitle').value = localStorage.getItem('heroTitle');
-                document.getElementById('heroText').value = localStorage.getItem('heroText');
-            }
-            
-            // Services Section
-            if (localStorage.getItem('service1Title')) {
-                document.getElementById('service1Title').value = localStorage.getItem('service1Title');
-                document.getElementById('service1Text').value = localStorage.getItem('service1Text');
-                document.getElementById('service2Title').value = localStorage.getItem('service2Title');
-                document.getElementById('service2Text').value = localStorage.getItem('service2Text');
-                document.getElementById('service3Title').value = localStorage.getItem('service3Title');
-                document.getElementById('service3Text').value = localStorage.getItem('service3Text');
-            }
-            
-            // Portfolio Section
-            if (localStorage.getItem('portfolio1Title')) {
-                document.getElementById('portfolio1Title').value = localStorage.getItem('portfolio1Title');
-                document.getElementById('portfolio1Subtitle').value = localStorage.getItem('portfolio1Subtitle');
-                document.getElementById('portfolio2Title').value = localStorage.getItem('portfolio2Title');
-                document.getElementById('portfolio2Subtitle').value = localStorage.getItem('portfolio2Subtitle');
-            }
-            
-            // About Section
-            if (localStorage.getItem('aboutTitle')) {
-                document.getElementById('aboutTitle').value = localStorage.getItem('aboutTitle');
-                document.getElementById('aboutText1').value = localStorage.getItem('aboutText1');
-                document.getElementById('aboutText2').value = localStorage.getItem('aboutText2');
-                document.getElementById('stat1Number').value = localStorage.getItem('stat1Number');
-                document.getElementById('stat1Label').value = localStorage.getItem('stat1Label');
-                document.getElementById('stat2Number').value = localStorage.getItem('stat2Number');
-                document.getElementById('stat2Label').value = localStorage.getItem('stat2Label');
-            }
-            
-            // Biography Section
-            if (localStorage.getItem('bioText1')) {
-                document.getElementById('bioText1').value = localStorage.getItem('bioText1');
-                document.getElementById('bioText2').value = localStorage.getItem('bioText2');
-                document.getElementById('bioText3').value = localStorage.getItem('bioText3');
-                document.getElementById('bioText4').value = localStorage.getItem('bioText4');
-            }
-            
-            // Contact Section
-            if (localStorage.getItem('contactAddress')) {
-                document.getElementById('contactAddress').value = localStorage.getItem('contactAddress');
-                document.getElementById('contactPhone').value = localStorage.getItem('contactPhone');
-                document.getElementById('contactEmail').value = localStorage.getItem('contactEmail');
-                document.getElementById('contactHours').value = localStorage.getItem('contactHours');
+        // Load current content from Firebase
+        async function loadCurrentContent() {
+            try {
+                // Hero Section
+                const heroRef = doc(db, "sections", "hero");
+                const heroSnap = await getDoc(heroRef);
+                
+                if (heroSnap.exists()) {
+                    const heroData = heroSnap.data();
+                    document.getElementById('heroTitle').value = heroData.heroTitle || "";
+                    document.getElementById('heroText').value = heroData.heroText || "";
+                }
+                
+                // Services Section
+                const servicesRef = doc(db, "sections", "services");
+                const servicesSnap = await getDoc(servicesRef);
+                
+                if (servicesSnap.exists()) {
+                    const servicesData = servicesSnap.data();
+                    document.getElementById('service1Title').value = servicesData.service1Title || "";
+                    document.getElementById('service1Text').value = servicesData.service1Text || "";
+                    document.getElementById('service2Title').value = servicesData.service2Title || "";
+                    document.getElementById('service2Text').value = servicesData.service2Text || "";
+                    document.getElementById('service3Title').value = servicesData.service3Title || "";
+                    document.getElementById('service3Text').value = servicesData.service3Text || "";
+                }
+                
+                // Portfolio Section
+                const portfolioRef = doc(db, "sections", "portfolio");
+                const portfolioSnap = await getDoc(portfolioRef);
+                
+                if (portfolioSnap.exists()) {
+                    const portfolioData = portfolioSnap.data();
+                    document.getElementById('portfolio1Title').value = portfolioData.portfolio1Title || "";
+                    document.getElementById('portfolio1Subtitle').value = portfolioData.portfolio1Subtitle || "";
+                    document.getElementById('portfolio2Title').value = portfolioData.portfolio2Title || "";
+                    document.getElementById('portfolio2Subtitle').value = portfolioData.portfolio2Subtitle || "";
+                }
+                
+                // About Section
+                const aboutRef = doc(db, "sections", "about");
+                const aboutSnap = await getDoc(aboutRef);
+                
+                if (aboutSnap.exists()) {
+                    const aboutData = aboutSnap.data();
+                    document.getElementById('aboutTitle').value = aboutData.aboutTitle || "";
+                    document.getElementById('aboutText1').value = aboutData.aboutText1 || "";
+                    document.getElementById('aboutText2').value = aboutData.aboutText2 || "";
+                    document.getElementById('stat1Number').value = aboutData.stat1Number || "";
+                    document.getElementById('stat1Label').value = aboutData.stat1Label || "";
+                    document.getElementById('stat2Number').value = aboutData.stat2Number || "";
+                    document.getElementById('stat2Label').value = aboutData.stat2Label || "";
+                }
+                
+                // Biography Section
+                const bioRef = doc(db, "sections", "biography");
+                const bioSnap = await getDoc(bioRef);
+                
+                if (bioSnap.exists()) {
+                    const bioData = bioSnap.data();
+                    document.getElementById('bioText1').value = bioData.bioText1 || "";
+                    document.getElementById('bioText2').value = bioData.bioText2 || "";
+                    document.getElementById('bioText3').value = bioData.bioText3 || "";
+                    document.getElementById('bioText4').value = bioData.bioText4 || "";
+                }
+                
+                // Contact Section
+                const contactRef = doc(db, "sections", "contact");
+                const contactSnap = await getDoc(contactRef);
+                
+                if (contactSnap.exists()) {
+                    const contactData = contactSnap.data();
+                    document.getElementById('contactAddress').value = contactData.contactAddress || "";
+                    document.getElementById('contactPhone').value = contactData.contactPhone || "";
+                    document.getElementById('contactEmail').value = contactData.contactEmail || "";
+                    document.getElementById('contactHours').value = contactData.contactHours || "";
+                }
+                
+            } catch (error) {
+                console.error("Error loading content:", error);
             }
         }
         
         // Update buttons functionality
         document.querySelectorAll('.update-btn').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', async function() {
                 const section = this.getAttribute('data-section');
                 const successMessage = this.nextElementSibling;
                 
-                // Save to localStorage
-               // Import the functions you need from the SDKs you need
- import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDU84fSCZo_zCzJT591pECgCJpThho0FaE",
-  authDomain: "archifini-admin.firebaseapp.com",
-  projectId: "archifini-admin",
-  storageBucket: "archifini-admin.firebasestorage.app",
-  messagingSenderId: "180531529090",
-  appId: "1:180531529090:web:c69cb85aee4324aced3b9b"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-                
-                // Show success message
-                successMessage.style.display = 'block';
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 3000);
-                
-                // Send email with changes
-                sendEmailNotification(section);
+                try {
+                    const sectionRef = doc(db, "sections", section);
+                    let sectionData = {};
+                    
+                    // Collect data based on section
+                    if (section === 'hero') {
+                        sectionData = {
+                            heroTitle: document.getElementById('heroTitle').value,
+                            heroText: document.getElementById('heroText').value
+                        };
+                    } 
+                    else if (section === 'services') {
+                        sectionData = {
+                            service1Title: document.getElementById('service1Title').value,
+                            service1Text: document.getElementById('service1Text').value,
+                            service2Title: document.getElementById('service2Title').value,
+                            service2Text: document.getElementById('service2Text').value,
+                            service3Title: document.getElementById('service3Title').value,
+                            service3Text: document.getElementById('service3Text').value
+                        };
+                    }
+                    else if (section === 'portfolio') {
+                        sectionData = {
+                            portfolio1Title: document.getElementById('portfolio1Title').value,
+                            portfolio1Subtitle: document.getElementById('portfolio1Subtitle').value,
+                            portfolio2Title: document.getElementById('portfolio2Title').value,
+                            portfolio2Subtitle: document.getElementById('portfolio2Subtitle').value
+                        };
+                    }
+                    else if (section === 'about') {
+                        sectionData = {
+                            aboutTitle: document.getElementById('aboutTitle').value,
+                            aboutText1: document.getElementById('aboutText1').value,
+                            aboutText2: document.getElementById('aboutText2').value,
+                            stat1Number: document.getElementById('stat1Number').value,
+                            stat1Label: document.getElementById('stat1Label').value,
+                            stat2Number: document.getElementById('stat2Number').value,
+                            stat2Label: document.getElementById('stat2Label').value
+                        };
+                    }
+                    else if (section === 'biography') {
+                        sectionData = {
+                            bioText1: document.getElementById('bioText1').value,
+                            bioText2: document.getElementById('bioText2').value,
+                            bioText3: document.getElementById('bioText3').value,
+                            bioText4: document.getElementById('bioText4').value
+                        };
+                    }
+                    else if (section === 'contact') {
+                        sectionData = {
+                            contactAddress: document.getElementById('contactAddress').value,
+                            contactPhone: document.getElementById('contactPhone').value,
+                            contactEmail: document.getElementById('contactEmail').value,
+                            contactHours: document.getElementById('contactHours').value
+                        };
+                    }
+                    
+                    // Save to Firebase
+                    await setDoc(sectionRef, sectionData);
+                    
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                    
+                    // Send email notification
+                    sendEmailNotification(section);
+                    
+                } catch (error) {
+                    console.error("Error saving data:", error);
+                    alert("Une erreur est survenue lors de la sauvegarde");
+                }
             });
         });
-        const heroRef = doc(db, "sections", "hero");
-
-  // Charger les données existantes
-  getDoc(heroRef).then(docSnap => {
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      document.getElementById('heroTitle').value = data.heroTitle || "";
-      document.getElementById('heroText').value = data.heroText || "";
-    }
-  });
-
-  // Sauvegarder les données
-  document.getElementById('saveHero').addEventListener('click', async () => {
-    const newData = {
-      heroTitle: document.getElementById('heroTitle').value,
-      heroText: document.getElementById('heroText').value
-    };
-    await setDoc(heroRef, newData);
-    alert('Section hero mise à jour !');
-  });
+        
         // Function to send email notification
         function sendEmailNotification(section) {
-            const emailData = {
-                section: section,
-                changes: {}
-            };
-            
-            // Collect changes based on section
-            if (section === 'hero') {
-                emailData.changes = {
-                    heroTitle: document.getElementById('heroTitle').value,
-                    heroText: document.getElementById('heroText').value
-                };
-            } 
-            else if (section === 'services') {
-                emailData.changes = {
-                    service1Title: document.getElementById('service1Title').value,
-                    service1Text: document.getElementById('service1Text').value,
-                    service2Title: document.getElementById('service2Title').value,
-                    service2Text: document.getElementById('service2Text').value,
-                    service3Title: document.getElementById('service3Title').value,
-                    service3Text: document.getElementById('service3Text').value
-                };
-            }
-            else if (section === 'portfolio') {
-                emailData.changes = {
-                    portfolio1Title: document.getElementById('portfolio1Title').value,
-                    portfolio1Subtitle: document.getElementById('portfolio1Subtitle').value,
-                    portfolio2Title: document.getElementById('portfolio2Title').value,
-                    portfolio2Subtitle: document.getElementById('portfolio2Subtitle').value
-                };
-            }
-            else if (section === 'about') {
-                emailData.changes = {
-                    aboutTitle: document.getElementById('aboutTitle').value,
-                    aboutText1: document.getElementById('aboutText1').value,
-                    aboutText2: document.getElementById('aboutText2').value,
-                    stat1Number: document.getElementById('stat1Number').value,
-                    stat1Label: document.getElementById('stat1Label').value,
-                    stat2Number: document.getElementById('stat2Number').value,
-                    stat2Label: document.getElementById('stat2Label').value
-                };
-            }
-            else if (section === 'biography') {
-                emailData.changes = {
-                    bioText1: document.getElementById('bioText1').value,
-                    bioText2: document.getElementById('bioText2').value,
-                    bioText3: document.getElementById('bioText3').value,
-                    bioText4: document.getElementById('bioText4').value
-                };
-            }
-            else if (section === 'contact') {
-                emailData.changes = {
-                    contactAddress: document.getElementById('contactAddress').value,
-                    contactPhone: document.getElementById('contactPhone').value,
-                    contactEmail: document.getElementById('contactEmail').value,
-                    contactHours: document.getElementById('contactHours').value
-                };
-            }
-            
-            // In a real implementation, you would send this data to your server
-            // which would then send the email. For demonstration, we'll log it.
-            console.log("Email notification data:", emailData);
-            
-            // This is where you would make an AJAX call to your server
-            // For example:
-            /*
-            fetch('/send-update-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(emailData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Email sent:', data);
-            })
-            .catch(error => {
-                console.error('Error sending email:', error);
-            });
-            */
-            
-            // For demo purposes, we'll simulate a successful email send
-            setTimeout(() => {
-                console.log(`Email sent to aouissifousseni@gmail.com about changes to ${section} section`);
-            }, 1000);
+            // Votre code existant pour l'envoi d'email
+            console.log(`Changes to ${section} section would be emailed here`);
         }
     </script>
 </body>
