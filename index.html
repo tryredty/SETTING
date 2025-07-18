@@ -497,7 +497,17 @@
                 // Successful login
                 loginScreen.style.display = 'none';
                 adminPanel.style.display = 'block';
-                
+    function checkPassword() {
+    const password = document.getElementById("passwordInput").value;
+
+    // Remplace "monmotdepasse" par ton vrai mot de passe
+    if (password === "Archifini12") {
+      alert("Accès autorisé !");
+      // Ici tu peux afficher le reste de la page ou rediriger vers Firebase
+    } else {
+      alert("Mot de passe incorrect !");
+    }
+  }
                 // Load current content
                 loadCurrentContent();
             } else {
@@ -605,8 +615,9 @@
                 const successMessage = this.nextElementSibling;
                 
                 // Save to localStorage
-               import { initializeApp } from "firebase/app";
-
+               // Import the functions you need from the SDKs you need
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
@@ -652,17 +663,6 @@ const app = initializeApp(firebaseConfig);
     await setDoc(heroRef, newData);
     alert('Section hero mise à jour !');
   });
-                // Show success message
-                successMessage.style.display = 'block';
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 3000);
-                
-                // Send email with changes
-                sendEmailNotification(section);
-            });
-        });
-        
         // Function to send email notification
         function sendEmailNotification(section) {
             const emailData = {
