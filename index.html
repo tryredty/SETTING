@@ -753,7 +753,21 @@
                 try {
                     let sectionData = {};
                     let imageUrls = {};
-                    
+                    // Dans chaque section avec image (hero, portfolio, about), modifiez la fonction d'upload :
+async function uploadImage(file, section, imageName, progressBarId, progressContainerId) {
+    try {
+        // ... code existant ...
+        
+        // Ajoutez un timestamp à l'URL pour éviter le cache
+        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+        const finalURL = downloadURL + '?t=' + Date.now(); // Force le rechargement
+        
+        return finalURL;
+    } catch (error) {
+        console.error("Error uploading image:", error);
+        throw error;
+    }
+}
                     // Handle image uploads based on section
                     if (section === 'hero') {
                         const imageInput = document.getElementById('heroImageInput');
