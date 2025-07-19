@@ -592,7 +592,7 @@
         setupImagePreview('portfolio2ImageInput', 'portfolio2ImagePreview');
         setupImagePreview('aboutImageInput', 'aboutImagePreview');
         
-        // Function to upload image to Firebase Storage
+        // Function to upload image to Firebase Storage with cache busting
         async function uploadImage(file, section, imageName, progressBarId, progressContainerId) {
             try {
                 // Show progress bar
@@ -621,12 +621,13 @@
                             reject(error);
                         },
                         async () => {
-                            // Upload complete, get download URL
+                            // Upload complete, get download URL with cache busting
                             try {
                                 const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                const finalURL = downloadURL + '?t=' + Date.now(); // Cache busting
                                 // Hide progress bar
                                 progressContainer.style.display = 'none';
-                                resolve(downloadURL);
+                                resolve(finalURL);
                             } catch (error) {
                                 progressContainer.style.display = 'none';
                                 reject(error);
@@ -640,7 +641,7 @@
             }
         }
         
-        // Load current content from Firestore
+        // Load current content from Firestore with cache busting for images
         async function loadCurrentContent() {
             try {
                 // Hero Section
@@ -654,7 +655,7 @@
                         const heroPreview = document.getElementById('heroImagePreview');
                         heroPreview.innerHTML = '';
                         const img = document.createElement('img');
-                        img.src = heroData.imageUrl;
+                        img.src = heroData.imageUrl + '?t=' + Date.now(); // Cache busting
                         heroPreview.appendChild(img);
                     }
                 }
@@ -684,7 +685,7 @@
                         const preview = document.getElementById('portfolio1ImagePreview');
                         preview.innerHTML = '';
                         const img = document.createElement('img');
-                        img.src = portfolioData.project1ImageUrl;
+                        img.src = portfolioData.project1ImageUrl + '?t=' + Date.now(); // Cache busting
                         preview.appendChild(img);
                     }
                     
@@ -692,7 +693,7 @@
                         const preview = document.getElementById('portfolio2ImagePreview');
                         preview.innerHTML = '';
                         const img = document.createElement('img');
-                        img.src = portfolioData.project2ImageUrl;
+                        img.src = portfolioData.project2ImageUrl + '?t=' + Date.now(); // Cache busting
                         preview.appendChild(img);
                     }
                 }
@@ -713,7 +714,7 @@
                         const preview = document.getElementById('aboutImagePreview');
                         preview.innerHTML = '';
                         const img = document.createElement('img');
-                        img.src = aboutData.imageUrl;
+                        img.src = aboutData.imageUrl + '?t=' + Date.now(); // Cache busting
                         preview.appendChild(img);
                     }
                 }
@@ -753,21 +754,7 @@
                 try {
                     let sectionData = {};
                     let imageUrls = {};
-                    // Dans chaque section avec image (hero, portfolio, about), modifiez la fonction d'upload :
-async function uploadImage(file, section, imageName, progressBarId, progressContainerId) {
-    try {
-        // ... code existant ...
-        
-        // Ajoutez un timestamp à l'URL pour éviter le cache
-        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-        const finalURL = downloadURL + '?t=' + Date.now(); // Force le rechargement
-        
-        return finalURL;
-    } catch (error) {
-        console.error("Error uploading image:", error);
-        throw error;
-    }
-}
+                    
                     // Handle image uploads based on section
                     if (section === 'hero') {
                         const imageInput = document.getElementById('heroImageInput');
