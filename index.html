@@ -423,6 +423,18 @@
                 <input type="text" class="form-control" id="service3Title" placeholder="Titre du service">
                 <textarea class="form-control" id="service3Text" placeholder="Description du service"></textarea>
                 
+                <h3>Service 4</h3>
+                <input type="text" class="form-control" id="service4Title" placeholder="Titre du service">
+                <textarea class="form-control" id="service4Text" placeholder="Description du service"></textarea>
+                
+                <h3>Service 5</h3>
+                <input type="text" class="form-control" id="service5Title" placeholder="Titre du service">
+                <textarea class="form-control" id="service5Text" placeholder="Description du service"></textarea>
+                
+                <h3>Service 6</h3>
+                <input type="text" class="form-control" id="service6Title" placeholder="Titre du service">
+                <textarea class="form-control" id="service6Text" placeholder="Description du service"></textarea>
+                
                 <button class="update-btn" data-section="services"><i class="fas fa-save"></i> Mettre à jour</button>
                 <div class="success-message" id="servicesSuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
@@ -455,6 +467,30 @@
                 <input type="text" class="form-control" id="portfolio2Title" placeholder="Titre du projet">
                 <input type="text" class="form-control" id="portfolio2Subtitle" placeholder="Sous-titre">
                 
+                <h3>Projet 3</h3>
+                <div class="image-preview" id="portfolio3ImagePreview">
+                    <div class="placeholder">Aperçu du projet 3</div>
+                </div>
+                <div class="progress-container" id="portfolio3ProgressContainer">
+                    <div class="progress-bar" id="portfolio3ProgressBar"></div>
+                </div>
+                <input type="file" id="portfolio3ImageInput" class="file-input" accept="image/*">
+                <label for="portfolio3ImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
+                <input type="text" class="form-control" id="portfolio3Title" placeholder="Titre du projet">
+                <input type="text" class="form-control" id="portfolio3Subtitle" placeholder="Sous-titre">
+                
+                <h3>Projet 4</h3>
+                <div class="image-preview" id="portfolio4ImagePreview">
+                    <div class="placeholder">Aperçu du projet 4</div>
+                </div>
+                <div class="progress-container" id="portfolio4ProgressContainer">
+                    <div class="progress-bar" id="portfolio4ProgressBar"></div>
+                </div>
+                <input type="file" id="portfolio4ImageInput" class="file-input" accept="image/*">
+                <label for="portfolio4ImageInput" class="file-label"><i class="fas fa-upload"></i> Changer l'image</label>
+                <input type="text" class="form-control" id="portfolio4Title" placeholder="Titre du projet">
+                <input type="text" class="form-control" id="portfolio4Subtitle" placeholder="Sous-titre">
+                
                 <button class="update-btn" data-section="portfolio"><i class="fas fa-save"></i> Mettre à jour</button>
                 <div class="success-message" id="portfolioSuccessMessage">Modifications enregistrées avec succès!</div>
             </div>
@@ -479,6 +515,10 @@
                 <input type="text" class="form-control" id="stat1Label" placeholder="Label 1">
                 <input type="text" class="form-control" id="stat2Number" placeholder="Nombre 2">
                 <input type="text" class="form-control" id="stat2Label" placeholder="Label 2">
+                <input type="text" class="form-control" id="stat3Number" placeholder="Nombre 3">
+                <input type="text" class="form-control" id="stat3Label" placeholder="Label 3">
+                <input type="text" class="form-control" id="stat4Number" placeholder="Nombre 4">
+                <input type="text" class="form-control" id="stat4Label" placeholder="Label 4">
                 
                 <button class="update-btn" data-section="about"><i class="fas fa-save"></i> Mettre à jour</button>
                 <div class="success-message" id="aboutSuccessMessage">Modifications enregistrées avec succès!</div>
@@ -590,6 +630,8 @@
         setupImagePreview('heroImageInput', 'heroImagePreview');
         setupImagePreview('portfolio1ImageInput', 'portfolio1ImagePreview');
         setupImagePreview('portfolio2ImageInput', 'portfolio2ImagePreview');
+        setupImagePreview('portfolio3ImageInput', 'portfolio3ImagePreview');
+        setupImagePreview('portfolio4ImageInput', 'portfolio4ImagePreview');
         setupImagePreview('aboutImageInput', 'aboutImagePreview');
         
         // Function to upload image to Firebase Storage with cache busting
@@ -664,37 +706,35 @@
                 const servicesDoc = await db.collection("sections").doc("services").get();
                 if (servicesDoc.exists) {
                     const servicesData = servicesDoc.data();
-                    document.getElementById('service1Title').value = servicesData.service1Title || "";
-                    document.getElementById('service1Text').value = servicesData.service1Text || "";
-                    document.getElementById('service2Title').value = servicesData.service2Title || "";
-                    document.getElementById('service2Text').value = servicesData.service2Text || "";
-                    document.getElementById('service3Title').value = servicesData.service3Title || "";
-                    document.getElementById('service3Text').value = servicesData.service3Text || "";
+                    for (let i = 1; i <= 6; i++) {
+                        if (servicesData[`service${i}Title`]) {
+                            document.getElementById(`service${i}Title`).value = servicesData[`service${i}Title`];
+                        }
+                        if (servicesData[`service${i}Text`]) {
+                            document.getElementById(`service${i}Text`).value = servicesData[`service${i}Text`];
+                        }
+                    }
                 }
                 
                 // Portfolio Section
                 const portfolioDoc = await db.collection("sections").doc("portfolio").get();
                 if (portfolioDoc.exists) {
                     const portfolioData = portfolioDoc.data();
-                    document.getElementById('portfolio1Title').value = portfolioData.project1Title || "";
-                    document.getElementById('portfolio1Subtitle').value = portfolioData.project1Subtitle || "";
-                    document.getElementById('portfolio2Title').value = portfolioData.project2Title || "";
-                    document.getElementById('portfolio2Subtitle').value = portfolioData.project2Subtitle || "";
-                    
-                    if (portfolioData.project1ImageUrl) {
-                        const preview = document.getElementById('portfolio1ImagePreview');
-                        preview.innerHTML = '';
-                        const img = document.createElement('img');
-                        img.src = portfolioData.project1ImageUrl + '?t=' + Date.now(); // Cache busting
-                        preview.appendChild(img);
-                    }
-                    
-                    if (portfolioData.project2ImageUrl) {
-                        const preview = document.getElementById('portfolio2ImagePreview');
-                        preview.innerHTML = '';
-                        const img = document.createElement('img');
-                        img.src = portfolioData.project2ImageUrl + '?t=' + Date.now(); // Cache busting
-                        preview.appendChild(img);
+                    for (let i = 1; i <= 4; i++) {
+                        if (portfolioData[`project${i}Title`]) {
+                            document.getElementById(`portfolio${i}Title`).value = portfolioData[`project${i}Title`];
+                        }
+                        if (portfolioData[`project${i}Subtitle`]) {
+                            document.getElementById(`portfolio${i}Subtitle`).value = portfolioData[`project${i}Subtitle`];
+                        }
+                        
+                        if (portfolioData[`project${i}ImageUrl`]) {
+                            const preview = document.getElementById(`portfolio${i}ImagePreview`);
+                            preview.innerHTML = '';
+                            const img = document.createElement('img');
+                            img.src = portfolioData[`project${i}ImageUrl`] + '?t=' + Date.now(); // Cache busting
+                            preview.appendChild(img);
+                        }
                     }
                 }
                 
@@ -705,10 +745,15 @@
                     document.getElementById('aboutTitle').value = aboutData.title || "";
                     document.getElementById('aboutText1').value = aboutData.text1 || "";
                     document.getElementById('aboutText2').value = aboutData.text2 || "";
-                    document.getElementById('stat1Number').value = aboutData.stat1Number || "";
-                    document.getElementById('stat1Label').value = aboutData.stat1Label || "";
-                    document.getElementById('stat2Number').value = aboutData.stat2Number || "";
-                    document.getElementById('stat2Label').value = aboutData.stat2Label || "";
+                    
+                    for (let i = 1; i <= 4; i++) {
+                        if (aboutData[`stat${i}Number`]) {
+                            document.getElementById(`stat${i}Number`).value = aboutData[`stat${i}Number`];
+                        }
+                        if (aboutData[`stat${i}Label`]) {
+                            document.getElementById(`stat${i}Label`).value = aboutData[`stat${i}Label`];
+                        }
+                    }
                     
                     if (aboutData.imageUrl) {
                         const preview = document.getElementById('aboutImagePreview');
@@ -778,42 +823,28 @@
                         };
                     } 
                     else if (section === 'services') {
-                        sectionData = {
-                            service1Title: document.getElementById('service1Title').value,
-                            service1Text: document.getElementById('service1Text').value,
-                            service2Title: document.getElementById('service2Title').value,
-                            service2Text: document.getElementById('service2Text').value,
-                            service3Title: document.getElementById('service3Title').value,
-                            service3Text: document.getElementById('service3Text').value
-                        };
+                        sectionData = {};
+                        for (let i = 1; i <= 6; i++) {
+                            sectionData[`service${i}Title`] = document.getElementById(`service${i}Title`).value;
+                            sectionData[`service${i}Text`] = document.getElementById(`service${i}Text`).value;
+                        }
                     }
                     else if (section === 'portfolio') {
-                        const imageInput1 = document.getElementById('portfolio1ImageInput');
-                        if (imageInput1.files.length > 0) {
-                            const file = imageInput1.files[0];
-                            const imageName = `portfolio1-${Date.now()}-${file.name}`;
-                            const imageUrl = await uploadImage(
-                                file, 
-                                'portfolio', 
-                                imageName,
-                                'portfolio1ProgressBar',
-                                'portfolio1ProgressContainer'
-                            );
-                            imageUrls.project1ImageUrl = imageUrl;
-                        }
-                        
-                        const imageInput2 = document.getElementById('portfolio2ImageInput');
-                        if (imageInput2.files.length > 0) {
-                            const file = imageInput2.files[0];
-                            const imageName = `portfolio2-${Date.now()}-${file.name}`;
-                            const imageUrl = await uploadImage(
-                                file, 
-                                'portfolio', 
-                                imageName,
-                                'portfolio2ProgressBar',
-                                'portfolio2ProgressContainer'
-                            );
-                            imageUrls.project2ImageUrl = imageUrl;
+                        // Handle portfolio images
+                        for (let i = 1; i <= 4; i++) {
+                            const imageInput = document.getElementById(`portfolio${i}ImageInput`);
+                            if (imageInput.files.length > 0) {
+                                const file = imageInput.files[0];
+                                const imageName = `portfolio${i}-${Date.now()}-${file.name}`;
+                                const imageUrl = await uploadImage(
+                                    file, 
+                                    'portfolio', 
+                                    imageName,
+                                    `portfolio${i}ProgressBar`,
+                                    `portfolio${i}ProgressContainer`
+                                );
+                                imageUrls[`project${i}ImageUrl`] = imageUrl;
+                            }
                         }
                         
                         sectionData = {
@@ -821,6 +852,10 @@
                             project1Subtitle: document.getElementById('portfolio1Subtitle').value,
                             project2Title: document.getElementById('portfolio2Title').value,
                             project2Subtitle: document.getElementById('portfolio2Subtitle').value,
+                            project3Title: document.getElementById('portfolio3Title').value,
+                            project3Subtitle: document.getElementById('portfolio3Subtitle').value,
+                            project4Title: document.getElementById('portfolio4Title').value,
+                            project4Subtitle: document.getElementById('portfolio4Subtitle').value,
                             ...imageUrls
                         };
                     }
@@ -847,6 +882,10 @@
                             stat1Label: document.getElementById('stat1Label').value,
                             stat2Number: document.getElementById('stat2Number').value,
                             stat2Label: document.getElementById('stat2Label').value,
+                            stat3Number: document.getElementById('stat3Number').value,
+                            stat3Label: document.getElementById('stat3Label').value,
+                            stat4Number: document.getElementById('stat4Number').value,
+                            stat4Label: document.getElementById('stat4Label').value,
                             ...imageUrls
                         };
                     }
